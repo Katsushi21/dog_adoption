@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  db:
+    container_name: adoption_db
+    image: postgres
+    volumes:
+      - adoption_data_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+  backend:
+    container_name: dog_adoption_back
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  frontend:
+    container_name: dog_adoption_front
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/frontend
+    command: sh -c "cd dog_adoption && yarn start"
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+volumes:
+  adoption_data_volume:
