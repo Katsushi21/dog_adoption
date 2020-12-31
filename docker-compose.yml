@@ -2,10 +2,10 @@ version: "3"
 
 services:
   db:
-    container_name: adoption_db
+    container_name: dog_adoption_db
     image: postgres
     volumes:
-      - adoption_data_volume:/var/lib/postgresql/data
+      - dog_adoption_data_volume:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -37,4 +37,4 @@ services:
       - backend
 
 volumes:
-  adoption_data_volume:
+  dog_adoption_data_volume:
