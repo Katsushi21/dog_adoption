@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import authReducer from '../features/auth/authSlice';
+import dog_dataReducer from '../features/dog_data/dog_dataSlice'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    auth: authReducer,
+    dog_data: dog_dataReducer,
   },
 });
 
@@ -14,3 +16,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export type AppDispatch = typeof store.dispatch;
