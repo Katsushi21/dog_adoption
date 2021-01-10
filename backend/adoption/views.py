@@ -5,24 +5,26 @@ from .models import Profile, Dog_Data
 
 
 class CreateUserView(generics.CreateAPIView):
-    serializer_class = serializers.UserSerializer
-    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserSerializer   # 対象のシリアライザーを指定
+    permission_classes = (AllowAny,)    # 誰でも新規ユーザー登録を可能とする記述
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.all()    # objectを全て取得する記述
     serializer_class = serializers.ProfileSerializer
 
+    # ユーザーIDを作成したプロフィールに格納する記述
     def perform_create(self, serializer):
-        serializer.save(company_profile=self.request.user)
+        serializer.save(companyProfile=self.request.user)
 
 
 class MyProfileListView(generics.ListAPIView):
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
 
+    # 自身のプロフィールのみをfilteringして表示する記述
     def get_queryset(self):
-        return self.queryset.filter(company_profile=self.request.user)
+        return self.queryset.filter(companyProfile=self.request.user)
 
 
 class Dog_DataViewSet(viewsets.ModelViewSet):
@@ -30,4 +32,4 @@ class Dog_DataViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.Dog_DataSerializer
 
     def perform_create(self, serializer):
-        serializer.save(company_post=self.request.user)
+        serializer.save(companyProfile=self.request.user)

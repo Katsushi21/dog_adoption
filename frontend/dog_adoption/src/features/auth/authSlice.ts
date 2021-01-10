@@ -1,8 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {RootState} from '../../app/store';
 import axios from "axios";
-import {PROPS_AUTHEN, PROPS_COMPANY_NAME, PROPS_PROFILE} from "../types";
-
+import {PROPS_AUTHEN, PROPS_ACCOUNT_NAME, PROPS_PROFILE} from "../types";
 
 const adoptionURL = process.env.REACT_APP_DEV_ADOPTION_URL;
 
@@ -32,8 +31,8 @@ export const fetchAsyncRegister = createAsyncThunk(
 
 export const fetchAsyncCreateProfile = createAsyncThunk(
     "profile/post",
-    async (company_name: PROPS_COMPANY_NAME) => {
-        const res = await axios.post(`${adoptionURL}adoption/profile/`, company_name, {
+    async (accountName: PROPS_ACCOUNT_NAME) => {
+        const res = await axios.post(`${adoptionURL}adoption/profile/`, accountName, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `JWT ${localStorage.localJWT}`,
@@ -47,7 +46,8 @@ export const fetchAsyncUpdateProfile = createAsyncThunk(
     "profile/put",
     async (profile: PROPS_PROFILE) => {
         const uploadData = new FormData();
-        uploadData.append("company_name", profile.company_name);
+        uploadData.append("accountName", profile.accountName);
+        profile.avatar && uploadData.append("avatar", profile.avatar, profile.avatar.name);
         const res = await axios.put(
             `${adoptionURL}adoption/profile/${profile.id}/`, uploadData, {
                 headers: {
@@ -93,14 +93,20 @@ export const authSlice = createSlice({
         isLoadingAuth: false,
         myprofile: {
             id: 0,
-            company_name: "",
-            company_profile: 0,
+            accountName: "",
+            accountProfile: 0,
+            avatar: "",
+            totalDonation: 0,
+            accountType: "",
         },
         profiles: [
             {
                 id: 0,
-                company_name: "",
-                company_profile: 0,
+                accountName: "",
+                accountProfile: 0,
+                avatar: "",
+                totalDonation: 0,
+                accountType: "",
             },
         ],
     },
@@ -129,11 +135,12 @@ export const authSlice = createSlice({
         resetOpenProfile(state) {
             state.openProfile = false;
         },
-        editCompany_name(state, action) {
-            state.myprofile.company_name = action.payload;
+        editAccountName(state, action) {
+            state.myprofile.accountName = action.payload;
         },
     },
 
+    // 非同期関数の後処理を定義
     extraReducers: (builder) => {
         builder.addCase(fetchAsyncLogin.fulfilled, (state, action) => {
             localStorage.setItem("localJWT", action.payload.access);
@@ -158,7 +165,7 @@ export const authSlice = createSlice({
 
 export const {
     fetchCredStart, fetchCredEnd, setOpenSignIn, resetOpenSignIn, setOpenSignUp, resetOpenSignUp,
-    setOpenProfile, resetOpenProfile, editCompany_name
+    setOpenProfile, resetOpenProfile, editAccountName
 } = authSlice.actions;
 
 

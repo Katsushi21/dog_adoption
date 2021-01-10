@@ -5,6 +5,7 @@ import {PROPS_NEWDATA} from "../types";
 
 const adoptionUrlData = `${process.env.REACT_APP_DEV_ADOPTION_URL}adoption/dog_data`;
 
+// 登録された全ての保護犬のデータを取得する記述
 export const fetchAsyncGetData = createAsyncThunk("dog_data/get", async () => {
     const res = await axios.get(adoptionUrlData, {
         headers: {
@@ -14,11 +15,12 @@ export const fetchAsyncGetData = createAsyncThunk("dog_data/get", async () => {
     return res.data;
 });
 
+// 保護犬データを新規に登録する記述
 export const fetchAsyncNewData = createAsyncThunk("dog_data/dog_data",
     async (newData: PROPS_NEWDATA) => {
         const uploadData = new FormData();
-        uploadData.append("name", newData.name);
-        newData.img && uploadData.append("img", newData.img, newData.img.name);
+        uploadData.append("dogName", newData.dogName);
+        newData.photo && uploadData.append("photo", newData.photo, newData.photo.name);
         const res = await axios.post(adoptionUrlData, uploadData, {
             headers: {
                 "Content-Type": "application/json",
@@ -37,22 +39,36 @@ export const dog_dataSlice = createSlice({
         data: [
             {
                 id: 0,
-                name: "",
-                company_Post: 0,
-                img: "",
+                dogName: "",
+                gender: "",
+                age: 0,
+                height: 0,
+                observations: "",
+                peopleFriendly: 0,
+                dogFriendly: 0,
+                color: "",
+                hair: "",
+                reason_for_arrival: "",
+                photo: "",
+                companyPost: 0,
+                registered_at: "",
+                updated_at: "",
             },
         ],
     },
     reducers: {
         fetchDataStart(state) {
             state.isLoadingData = true;
-        },
+        }
+        ,
         fetchDataEnd(state) {
             state.isLoadingData = false;
-        },
+        }
+        ,
         setOpenNewData(state) {
             state.openNewData = true;
-        },
+        }
+        ,
         resetOpenNewData(state) {
             state.openNewData = false;
         },

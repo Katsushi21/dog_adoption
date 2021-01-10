@@ -7,13 +7,13 @@ import {File} from "../types";
 import {
     fetchDataStart,
     fetchDataEnd,
-    setOpenNewData,
-    resetOpenNewData,
     fetchAsyncNewData,
+    resetOpenNewData,
     selectOpenNewData
 } from "../dog_data/dog_dataSlice";
-import {Button, TextField, IconButton, Icon} from "@material-ui/core";
-import {MdAddAPhoto} from "react-icons/all";
+
+import {Button, TextField, IconButton} from "@material-ui/core";
+import {MdAddAPhoto} from "react-icons/md";
 
 const customStyles = {
     content: {
@@ -29,32 +29,33 @@ const customStyles = {
 const NewData: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const openNewData = useSelector(selectOpenNewData);
-    const [image, setImage] = useState<file | null>(null);
+    const [image, setImage] = useState<File | null>(null);
     const [name, setName] = useState("");
-    const handlerEditPicture = document.getElementById("ImageInput");
-    fileInput?.click();
-};
-
-const newData = async (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    const packet = {name: name, img: image};
-    await dispatch(fetchDataStart());
-    await dispatch(fetchAsyncNewData(packet));
-    await dispatch(fetchDataEnd());
-    setName("");
-    setImage(null);
-    dispatch(resetOpenNewData());
+    const handlerEditPicture = () => {
+        const fileInput = document.getElementById("ImageInput")
+        fileInput?.click();
+    };
+    const newData = async (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        const packet = {dogName: name, photo: image};
+        await dispatch(fetchDataStart());
+        await dispatch(fetchAsyncNewData(packet));
+        await dispatch(fetchDataEnd());
+        setName("");
+        setImage(null);
+        dispatch(resetOpenNewData());
+    };
 
 
     return (
         <>
-            <Modal isOpen={OpenNewData()}
+            <Modal isOpen={openNewData}
                    onRequestClose={async () => {
-                       await createDispatchHook(resetOpenNewData());
+                       await dispatch(resetOpenNewData());
                    }}
                    style={customStyles}>
                 <form className={styles.core_signUp}>
-                    <h1 className={styles.core_title}>Dog_Adoption</h1>
+                    <h1 className={styles.core_title}>Dog Adoption</h1>
                     <br/>
                     <TextField
                         placeholder="Please enter the dog"
@@ -73,14 +74,17 @@ const newData = async (e: React.MouseEvent<HTMLElement>) => {
                     </IconButton>
                     <br/>
                     <Button
-                        disabled={!name || image}
+                        disabled={!name || !image}
                         variant="contained"
                         color="primary"
                         onClick={newData}
-                    >New Dog Data</Button>
+                    >
+                        New Dog Data
+                    </Button>
                 </form>
             </Modal>
         </>
     );
 };
+
 export default NewData;

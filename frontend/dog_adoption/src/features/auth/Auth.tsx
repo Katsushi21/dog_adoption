@@ -8,12 +8,13 @@ import * as Yup from "yup";
 import {TextField, Button, CircularProgress} from "@material-ui/core";
 import {
     fetchCredStart, fetchCredEnd,
-    fetchAsyncLogin, fetchAsyncCreateProfile, fetchAsyncGetMyProfile, fetchAsyncGetProfiles, fetchAsyncUpdateProfile,
+    fetchAsyncLogin, fetchAsyncCreateProfile, fetchAsyncGetMyProfile, fetchAsyncGetProfiles,
     setOpenSignIn, resetOpenSignIn, setOpenSignUp, resetOpenSignUp, selectIsLoadingAuth, selectOpenSignIn,
     selectOpenSignUp, fetchAsyncRegister
 } from "./authSlice";
 import {fetchAsyncGetData} from "../dog_data/dog_dataSlice"
 
+// モーダルのスタイルを定義
 const customStyles = {
     overlay: {
         backgroundColor: "#777777",
@@ -54,7 +55,7 @@ const Auth: React.FC = () => {
 
                                 if (fetchAsyncRegister.fulfilled.match(resultReg)) {
                                     await dispatch(fetchAsyncLogin(values));
-                                    await dispatch(fetchAsyncCreateProfile({company_name: "anonymous"}));
+                                    await dispatch(fetchAsyncCreateProfile({accountName: "anonymous"}));
                                     await dispatch(fetchAsyncGetProfiles());
                                     await dispatch(fetchAsyncGetData());
                                     await dispatch(fetchAsyncGetMyProfile());
@@ -90,8 +91,8 @@ const Auth: React.FC = () => {
 
                                         <TextField placeholder="password" type="password" name="password"
                                                    onChange={handleChange} onBlur={handleBlur} value={values.password}/>
-                                        {touched.email && errors.email ? (
-                                            <div className={styles.auth_error}>{errors.email}</div>
+                                        {touched.password && errors.password ? (
+                                            <div className={styles.auth_error}>{errors.password}</div>
                                         ) : null}
                                         <br/>
                                         <br/>
@@ -157,8 +158,8 @@ const Auth: React.FC = () => {
 
                                         <TextField placeholder="password" type="password" name="password"
                                                    onChange={handleChange} onBlur={handleBlur} value={values.password}/>
-                                        {touched.email && errors.email ? (
-                                            <div className={styles.auth_error}>{errors.email}</div>
+                                        {touched.password && errors.password ? (
+                                            <div className={styles.auth_error}>{errors.password}</div>
                                         ) : null}
                                         <br/>
                                         <br/>
