@@ -25,7 +25,7 @@ import {
     setOpenNewData, resetOpenNewData, fetchAsyncGetData, selectData, selectIsLoadingData
 } from "../dog_data/dog_dataSlice";
 
-import Data from "../dog_data/Dog_Data"
+import Dog_Data from "../dog_data/Dog_Data"
 import EditProfile from "./EditProfile";
 import NewData from "./NewData";
 
@@ -58,133 +58,130 @@ const StyledBadge = withStyles((theme) => ({
     },
 }))(Badge);
 
-
 const Core: React.FC = () => {
-        const dispatch: AppDispatch = useDispatch();
-        const profile = useSelector(selectProfile);
-        const data = useSelector(selectData);
-        const isLoadingData = useSelector(selectIsLoadingData);
-        const isLoadingAuth = useSelector(selectIsLoadingAuth);
+    const dispatch: AppDispatch = useDispatch();
+    const profile = useSelector(selectProfile);
+    const data = useSelector(selectData);
+    const isLoadingData = useSelector(selectIsLoadingData);
+    const isLoadingAuth = useSelector(selectIsLoadingAuth);
 
-        // ブラウザが起動した際に実行される処理
-        useEffect(() => {
-            const fetchBootLoader = async () => {
-                if (localStorage.localJWT) {
-                    dispatch(resetOpenSignIn());
-                    const result = await dispatch(fetchAsyncGetMyProfile());
-                    if (fetchAsyncGetMyProfile.rejected.match(result)) {
-                        dispatch(setOpenSignIn());
-                        return null;
-                    }
-                    await dispatch(fetchAsyncGetData());
-                    await dispatch(fetchAsyncGetProfiles());
+    // ブラウザが起動した際に実行される処理
+    useEffect(() => {
+        const fetchBootLoader = async () => {
+            if (localStorage.localJWT) {
+                dispatch(resetOpenSignIn());
+                const result = await dispatch(fetchAsyncGetMyProfile());
+                if (fetchAsyncGetMyProfile.rejected.match(result)) {
+                    dispatch(setOpenSignIn());
+                    return null;
                 }
-            };
-            fetchBootLoader();
-        }, [dispatch]);
+                await dispatch(fetchAsyncGetData());
+                await dispatch(fetchAsyncGetProfiles());
+            }
+        };
+        fetchBootLoader();
+    }, [dispatch]);
 
-
-        return (
-            <div>
-                <Auth/>
-                <EditProfile/>
-                <NewData/>
-                <div className={styles.core_header}>
-                    <h1 className={styles.core_title}>Dog Adoption</h1>
-                    {profile?.accountName ? (
-                        <>
+    return (
+        <div>
+            <Auth/>
+            <EditProfile/>
+            <NewData/>
+            <div className={styles.core_header}>
+                <h1 className={styles.core_title}>Dog Adoption</h1>
+                {profile?.accountName ? (
+                    <>
+                        <button className={styles.core_btnModal}
+                                onClick={() => {
+                                    dispatch(setOpenNewData());
+                                    dispatch(resetOpenProfile());
+                                }}
+                        >
+                            <MdAddAPhoto/>
+                        </button>
+                        <div className={styles.core_logout}>
+                            {(isLoadingData || isLoadingAuth) && <CircularProgress/>}
+                            <Button onClick={() => {
+                                localStorage.removeItem("localJWT");
+                                dispatch(editAccountName(""));
+                                dispatch((resetOpenProfile()));
+                                dispatch(resetOpenNewData());
+                                dispatch(setOpenSignIn());
+                            }}
+                            >
+                                Log Out
+                            </Button>
                             <button className={styles.core_btnModal}
                                     onClick={() => {
-                                        dispatch(setOpenNewData());
-                                        dispatch(resetOpenProfile());
+                                        dispatch(setOpenProfile());
+                                        dispatch(resetOpenNewData());
                                     }}
                             >
-                                <MdAddAPhoto/>
+                                <StyledBadge
+                                    overlap="circle"
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    variant="dot"
+                                >
+                                    <Avatar alt="Who?" src={profile.avatar}/>{" "}
+                                </StyledBadge>
                             </button>
-                            <div className={styles.core_logout}>
-                                {(isLoadingData || isLoadingAuth) && <CircularProgress/>}
-                                <Button onClick={() => {
-                                    localStorage.removeItem("localJWT");
-                                    dispatch(editAccountName(""));
-                                    dispatch((resetOpenProfile()));
-                                    dispatch(resetOpenNewData());
-                                    dispatch(setOpenSignIn());
-                                }}
-                                >
-                                    Log Out
-                                </Button>
-                                <button className={styles.core_btnModal}
-                                        onClick={() => {
-                                            dispatch(setOpenProfile());
-                                            dispatch(resetOpenNewData());
-                                        }}
-                                >
-                                    <StyledBadge
-                                        overlap="circle"
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'right',
-                                        }}
-                                        variant="dot"
-                                    >
-                                        <Avatar alt="Who?" src={profile.avatar}/>{" "}
-                                    </StyledBadge>
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <div>
-                            <Button onClick={() => {
-                                dispatch(setOpenSignIn());
-                                dispatch(resetOpenSignUp());
-                            }}
-                            >
-                                Log In
-                            </Button>
-                            <Button onClick={() => {
-                                dispatch(setOpenSignUp());
-                                dispatch(resetOpenSignIn());
-                            }}
-                            >
-                                Sign Up
-                            </Button>
-                        </div>
-                    )}
-                </div>
-
-                {profile?.accountName && (
-                    <>
-                        <div className={styles.core_data}>
-                            <Grid container spacing={4}>
-                                {data
-                                    .slice(0)
-                                    .reverse()
-                                    .map((data) => (
-                                        <Grid key={data.id} item xs={12} md={4}>
-                                            <Data
-                                                dataId={data.id}
-                                                loginId={profile.accountProfile}
-                                                dogName={data.dogName}
-                                                gender={data.gender}
-                                                age={data.age}
-                                                height={data.height}
-                                                observations={data.observations}
-                                                peopleFriendly={data.peopleFriendly}
-                                                dogFriendly={data.dogFriendly}
-                                                color={data.color}
-                                                hair={data.hair}
-                                                reason_for_arrival={data.reason_for_arrival}
-                                                photo={data.photo}
-                                                companyPost={data.companyPost}
-                                            />
-                                        </Grid>
-                                    ))}
-                            </Grid>
                         </div>
                     </>
+                ) : (
+                    <div>
+                        <Button onClick={() => {
+                            dispatch(setOpenSignIn());
+                            dispatch(resetOpenSignUp());
+                        }}
+                        >
+                            Log In
+                        </Button>
+                        <Button onClick={() => {
+                            dispatch(setOpenSignUp());
+                            dispatch(resetOpenSignIn());
+                        }}
+                        >
+                            Sign Up
+                        </Button>
+                    </div>
                 )}
             </div>
-        );
-    }
-;
+
+            {profile?.accountName && (
+                <>
+                    <div className={styles.core_data}>
+                        <Grid container spacing={4}>
+                            {data
+                                .slice(0)
+                                .reverse()
+                                .map((data) => (
+                                    <Grid key={data.id} item xs={12} md={4}>
+                                        <Dog_Data
+                                            dataId={data.id}
+                                            loginId={profile.accountProfile}
+                                            dogName={data.dogName}
+                                            gender={data.gender}
+                                            age={data.age}
+                                            height={data.height}
+                                            observations={data.observations}
+                                            peopleFriendly={data.peopleFriendly}
+                                            dogFriendly={data.dogFriendly}
+                                            color={data.color}
+                                            hair={data.hair}
+                                            reason_for_arrival={data.reason_for_arrival}
+                                            photo={data.photo}
+                                            companyPost={data.companyPost}
+                                        />
+                                    </Grid>
+                                ))}
+                        </Grid>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
 export default Core;

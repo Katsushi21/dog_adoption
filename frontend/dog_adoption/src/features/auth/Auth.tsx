@@ -97,7 +97,7 @@ const Auth: React.FC = () => {
                                         <br/>
                                         <br/>
                                         <Button variant="contained" color="primary" disabled={!isValid} type="submit">
-                                            Register
+                                            SIGN UP
                                         </Button>
                                         <br/>
                                         <br/>
@@ -143,7 +143,7 @@ const Auth: React.FC = () => {
                             <div>
                                 <form onSubmit={handleSubmit}>
                                     <div className={styles.auth_signUp}>
-                                        <h1 className={styles.auth_title}>Dog Adoption</h1>
+                                        <h1 className={styles.auth_title}>Log In</h1>
                                         <br/>
                                         <div className={styles.auth_progress}>
                                             {isLoadingAuth && <CircularProgress/>}
